@@ -67,15 +67,12 @@
           .then(function(data) {
             console.log(data); //this will just be text
             var data_obj = JSON.parse(data);
-            return data_obj;
+
+            return data_obj.map(i => [Date.parse(i.date), i.pounds]);
           });
       };
 
       let alanData = getData();
-
-      for (var i = 0, weight; (weight = alanData.weights[i]); i++) {
-        alanWeightData.push([Date.parse(weight.date), weight.pounds]);
-      }
 
       Highcharts.chart("weights", {
         title: {
