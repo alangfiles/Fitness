@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Fitness</title>
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <style>
+      #weights {
+        height: 400px;
+      }
+      #wrapper {
+        width: 800;
+        margin: 0 auto;
+      }
+      #wrapper h1 {
+        text-align: center;
+      }
+      .widget {
+        background-color: #eee;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        -webkit-border-radius: 5px;
+        -moz-border-radius: 5px;
+        padding: 10px;
+        margin: 10px;
+      }
+      .widget h3 {
+        text-align: center;
+        margin: 0;
+        margin-bottom: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="wrapper">
+      <h1>Fitness!</h1>
+      <div id="weights" class="widget"></div>
+    </div>
+
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/series-label.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/export-data.js"></script>
+
+    <script>
+      var alanWeightData = [];
+      let alanData;
+      let getData = () => {
+        const url =
+          "https://gist.githubusercontent.com/alangfiles/912b7456dd1f5fb9f821cb8e2fced104/raw/b2780e3f1e72be4d8396c899295dcda4dd94c48c/weight.json";
+
+        return fetch(url, {
+          method: "GET",
+          headers: {
+            Accept: "application/json",
+            "X-Parse-Application-Id": "12122",
+            "X-Parse-REST-API-Key": "12121",
+            "Content-Type": "application/json"
+          }
+        })
+          .then(function(response) {
+            return response.text();
+          })
+          .then(function(data) {
+            console.log(data); //this will just be text
+            var data_obj = JSON.parse(data);
+            return data_obj;
+          });
+      };
+
+      let alanData = getData();
+
+      for (var i = 0, weight; (weight = alanData.weights[i]); i++) {
+        alanWeightData.push([Date.parse(weight.date), weight.pounds]);
+      }
+
+      Highcharts.chart("weights", {
+        title: {
+          text: "Weights"
+        },
+        xAxis: {
+          type: "datetime",
+          dateTimeLabelFormats: {
+            day: "%e %b",
+            week: "%e %b",
+            month: "%b '%y",
+            year: "%Y"
+          }
+        },
+        yAxis: [
+          {
+            labels: {
+              formatter: function() {
+                return this.value + " Minutes";
+              },
+              style: {
+                color: "#AA4643"
+              }
+            },
+            title: {
+              text: "Run Times (minutes)"
+            },
+            opposite: true
+          },
+          {
+            labels: {
+              formatter: function() {
+                return this.value + " lbs";
+              },
+              style: {
+                color: "#4572A7"
+              }
+            },
+            title: {
+              text: "Weights",
+              style: {
+                color: "#4572A7"
+              }
+            }
+          }
+        ], //
+
+        plotOptions: {
+          series: {
+            label: {
+              connectorAllowed: false
+            },
+            pointStart: 2010
+          }
+        },
+
+        series: [
+          {
+            type: "scatter",
+            name: "Weight",
+            yAxis: 1,
+            color: "#4572A7",
+            data: alanWeightData
+          }
+        ],
+
+        responsive: {
+          rules: [
+            {
+              condition: {
+                maxWidth: 400
+              },
+              chartOptions: {
+                legend: {
+                  layout: "horizontal",
+                  align: "center",
+                  verticalAlign: "bottom"
+                }
+              }
+            }
+          ]
+        }
+      });
+    </script>
+  </body>
+</html>
