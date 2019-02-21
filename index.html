@@ -46,8 +46,6 @@
     <script src="https://code.highcharts.com/modules/export-data.js"></script>
 
     <script>
-      var alanWeightData = [];
-      let alanData;
       let getData = () => {
         const url =
           "https://gist.githubusercontent.com/alangfiles/912b7456dd1f5fb9f821cb8e2fced104/raw/b2780e3f1e72be4d8396c899295dcda4dd94c48c/weight.json";
@@ -135,7 +133,7 @@
             name: "Weight",
             yAxis: 1,
             color: "#4572A7",
-            data: alanWeightData
+            data: alanData
           }
         ],
 
