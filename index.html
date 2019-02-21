@@ -53,6 +53,9 @@
         ) {
           processed_json = data.map(i => [Date.parse(i.date), i.weight]);
           $("#weights").highcharts({
+            chart: {
+              zoomType: "x"
+            },
             title: {
               text: "Weights"
             },
