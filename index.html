@@ -60,10 +60,7 @@
             return response.text();
           })
           .then(function(data) {
-            console.log("data", data);
             var data_obj = JSON.parse(data);
-            console.log("data_obj", data_obj);
-
             return data_obj.map(i => [Date.parse(i.date), i.weight]);
           });
       };
@@ -113,7 +110,7 @@
           {
             type: "scatter",
             name: "Weight",
-            yAxis: 1,
+            yAxis: 0,
             color: "#4572A7",
             data: getData()
           }
