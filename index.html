@@ -60,7 +60,6 @@
             return response.text();
           })
           .then(function(data) {
-            console.log(data);
             var data_obj = JSON.parse(data);
 
             return data_obj.map(i => [Date.parse(i.date), i.weight]);
