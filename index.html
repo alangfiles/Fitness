@@ -48,14 +48,12 @@
     <script>
       let getData = () => {
         const url =
-          "https://gist.githubusercontent.com/alangfiles/912b7456dd1f5fb9f821cb8e2fced104/raw/b2780e3f1e72be4d8396c899295dcda4dd94c48c/weight.json";
+          "https://alangfiles.github.io/Fitness/data.json";
 
         return fetch(url, {
           method: "GET",
           headers: {
             Accept: "application/json",
-            "X-Parse-Application-Id": "12122",
-            "X-Parse-REST-API-Key": "12121",
             "Content-Type": "application/json"
           }
         })
@@ -63,14 +61,14 @@
             return response.text();
           })
           .then(function(data) {
-            console.log(data); //this will just be text
+            console.log(data); 
             var data_obj = JSON.parse(data);
 
             return data_obj.map(i => [Date.parse(i.date), i.pounds]);
           });
       };
 
-      let alanData = getData();
+      //let alanData = getData();
 
       Highcharts.chart("weights", {
         title: {
@@ -89,20 +87,6 @@
           {
             labels: {
               formatter: function() {
-                return this.value + " Minutes";
-              },
-              style: {
-                color: "#AA4643"
-              }
-            },
-            title: {
-              text: "Run Times (minutes)"
-            },
-            opposite: true
-          },
-          {
-            labels: {
-              formatter: function() {
                 return this.value + " lbs";
               },
               style: {
@@ -116,7 +100,7 @@
               }
             }
           }
-        ], //
+        ],
 
         plotOptions: {
           series: {
@@ -133,7 +117,7 @@
             name: "Weight",
             yAxis: 1,
             color: "#4572A7",
-            data: alanData
+            data: getData()
           }
         ],
 
