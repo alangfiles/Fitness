@@ -61,7 +61,9 @@
           })
           .then(function(data) {
             var data_obj = JSON.parse(data);
-            return data_obj.map(i => [Date.parse(i.date), i.weight]);
+            let mapped = data_obj.map(i => [Date.parse(i.date), i.weight]);
+            console.log("mapped", mapped);
+            return mapped;
           });
       };
 
@@ -78,60 +80,28 @@
             year: "%Y"
           }
         },
-        yAxis: [
-          {
-            labels: {
-              formatter: function() {
-                return this.value + " lbs";
-              },
-              style: {
-                color: "#4572A7"
-              }
-            },
-            title: {
-              text: "Weights",
-              style: {
-                color: "#4572A7"
-              }
+        yAxis: {
+          title: {
+            text: "Weights",
+            style: {
+              color: "#4572A7"
             }
-          }
-        ],
-
-        plotOptions: {
-          series: {
-            label: {
-              connectorAllowed: false
-            },
-            pointStart: 2010
           }
         },
-
+        plotOptions: {
+          spline: {
+            marker: {
+              enabled: true
+            }
+          }
+        },
+        colors: ["#4572A7"],
         series: [
           {
-            type: "scatter",
             name: "Weight",
-            yAxis: 0,
-            color: "#4572A7",
             data: getData()
           }
-        ],
-
-        responsive: {
-          rules: [
-            {
-              condition: {
-                maxWidth: 400
-              },
-              chartOptions: {
-                legend: {
-                  layout: "horizontal",
-                  align: "center",
-                  verticalAlign: "bottom"
-                }
-              }
-            }
-          ]
-        }
+        ]
       });
     </script>
   </body>
