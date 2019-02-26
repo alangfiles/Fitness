@@ -54,6 +54,9 @@
         ) {
           processed_json = data.map(i => [Date.parse(i.date), i.weight]);
           processed_json = processed_json.sort();
+          
+          console.log('processed', processed_json);
+          
           $("#weights").highcharts(getHighChartsOptions(processed_json));
 
           $("#recent").highcharts(
