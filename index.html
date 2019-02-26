@@ -48,24 +48,8 @@
 
     <script>
       $(function() {
-        var processed_json = new Array();
-        $.getJSON("https://alangfiles.github.io/Fitness/data.json", function(
-          data
-        ) {
-          processed_json = data.map(i => [Date.parse(i.date), i.weight]);
-          processed_json = processed_json.sort();
-          
-          console.log('processed', processed_json);
-          
-          $("#weights").highcharts(getHighChartsOptions(processed_json));
-
-          $("#recent").highcharts(
-            getHighChartsOptions(processed_json.slice(0, 100))
-          );
-        });
-      });
-
-      let getHighChartsOptions = data => {
+        
+        let getHighChartsOptions = data => {
         return {
           chart: {
             zoomType: "x"
@@ -107,6 +91,25 @@
           ]
         };
       };
+        
+        var processed_json = new Array();
+        $.getJSON("https://alangfiles.github.io/Fitness/data.json", function(
+          data
+        ) {
+          processed_json = data.map(i => [Date.parse(i.date), i.weight]);
+          processed_json = processed_json.sort();
+          
+          console.log('processed', processed_json);
+          
+          $("#weights").highcharts(getHighChartsOptions(processed_json));
+
+          $("#recent").highcharts(
+            getHighChartsOptions(processed_json.slice(0, 100))
+          );
+        });
+      });
+
+      
     </script>
   </body>
 </html>
