@@ -10,9 +10,15 @@
     <style>
       #weights {
         height: 400px;
+        width: 90%;
       }
       #recent {
         height: 400px;
+        width: 49%;
+      }
+      #daily {
+        height: 400px;
+        width: 38%;
       }
       #wrapper {
         width: 800;
@@ -29,6 +35,7 @@
         -moz-border-radius: 5px;
         padding: 10px;
         margin: 10px;
+        float: left;
       }
       .widget h3 {
         text-align: center;
@@ -42,6 +49,7 @@
       <h1>Fitness!</h1>
       <div id="weights" class="widget"></div>
       <div id="recent" class="widget"></div>
+      <div id="daily" class="widget"></div>
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script src="https://code.highcharts.com/highcharts.js"></script>
@@ -58,88 +66,56 @@
             processed_json = data.map(i => [Date.parse(i.date), i.weight]);
             processed_json = processed_json.sort().reverse();
 
-            $("#weights").highcharts({
-              chart: {
-                zoomType: "x"
-              },
-              title: {
-                text: "Weights"
-              },
-              xAxis: {
-                type: "datetime",
-                dateTimeLabelFormats: {
-                  day: "%e %b",
-                  week: "%e %b",
-                  month: "%b '%y",
-                  year: "%Y"
-                }
-              },
-              yAxis: {
+            let options = (data, title) => {
+              return {
+                chart: {
+                  zoomType: "x"
+                },
                 title: {
-                  text: "Weights",
-                  style: {
-                    color: "#4572A7"
+                  text: title
+                },
+                xAxis: {
+                  type: "datetime",
+                  dateTimeLabelFormats: {
+                    day: "%e %b",
+                    week: "%e %b",
+                    month: "%b '%y",
+                    year: "%Y"
                   }
-                }
-              },
-              colors: ["#4572A7"],
-              tooltip: {
-                formatter: function() {
-                  return `${Highcharts.dateFormat("%e %b %Y", this.x)}: ${
-                    this.y
-                  } lbs`;
-                }
-              },
-              series: [
-                {
-                  type: "scatter",
-                  name: "Weight",
-                  data: processed_json
-                }
-              ]
-            });
-            let recent = processed_json.slice(0, 100);
+                },
+                yAxis: {
+                  title: {
+                    text: "Weights",
+                    style: {
+                      color: "#4572A7"
+                    }
+                  }
+                },
+                colors: ["#4572A7"],
+                tooltip: {
+                  formatter: function() {
+                    return `${Highcharts.dateFormat("%e %b %Y", this.x)}: ${
+                      this.y
+                    } lbs`;
+                  }
+                },
+                series: [
+                  {
+                    type: "scatter",
+                    name: "Weight",
+                    data: data
+                  }
+                ]
+              };
+            };
 
-            $("#recent").highcharts({
-              chart: {
-                zoomType: "x"
-              },
-              title: {
-                text: "Most Recent 100 Weights"
-              },
-              xAxis: {
-                type: "datetime",
-                dateTimeLabelFormats: {
-                  day: "%e %b",
-                  week: "%e %b",
-                  month: "%b '%y",
-                  year: "%Y"
-                }
-              },
-              yAxis: {
-                title: {
-                  text: "Weights",
-                  style: {
-                    color: "#4572A7"
-                  }
-                }
-              },
-              colors: ["#4572A7"],
-              tooltip: {
-                formatter: function() {
-                  return `${Highcharts.dateFormat("%e %b %Y", this.x)}: ${
-                    this.y
-                  } lbs`;
-                }
-              },
-              series: [
-                {
-                  type: "scatter",
-                  name: "Weight",
-                  data: recent
-                }
-              ]
-            });
+            $("#weights").highcharts(options(processed_json, "Weights"));
+            let recent = processed_json.slice(0, 100);
+            $("#recent").highcharts(options(recent, "Most Recent 100 Weights"));
+            let mostRecent = processed_json.slice(0, 10);
+            $("#daily").highcharts(
+              options(mostRecent, "Most Recent 10 Weights")
+            );
           }
         );
       });
