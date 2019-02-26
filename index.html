@@ -11,9 +11,6 @@
       #weights {
         height: 400px;
       }
-      #recent {
-        height: 400px;
-      }
       #wrapper {
         width: 800;
         margin: 0 auto;
@@ -41,7 +38,6 @@
     <div id="wrapper">
       <h1>Fitness!</h1>
       <div id="weights" class="widget"></div>
-      <div id="recent" class="widget"></div>
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script src="https://code.highcharts.com/highcharts.js"></script>
@@ -51,104 +47,56 @@
 
     <script>
       $(function() {
-        
         var processed_json = new Array();
         $.getJSON("https://alangfiles.github.io/Fitness/data.json", function(
           data
         ) {
           processed_json = data.map(i => [Date.parse(i.date), i.weight]);
-          processed_json = processed_json.sort();
-          
-          console.log('processed', processed_json);
-          
           $("#weights").highcharts({
-          chart: {
-            zoomType: "x"
-          },
-          title: {
-            text: "Weights"
-          },
-          xAxis: {
-            type: "datetime",
-            dateTimeLabelFormats: {
-              day: "%e %b",
-              week: "%e %b",
-              month: "%b '%y",
-              year: "%Y"
-            }
-          },
-          yAxis: {
+            chart: {
+              zoomType: "x"
+            },
             title: {
-              text: "Weights",
-              style: {
-                color: "#4572A7"
+              text: "Weights"
+            },
+            data: {
+              columnsURL: "https://alangfiles.github.io/Fitness/data.json"
+            },
+            xAxis: {
+              type: "datetime",
+              dateTimeLabelFormats: {
+                day: "%e %b",
+                week: "%e %b",
+                month: "%b '%y",
+                year: "%Y"
               }
-            }
-          },
-          colors: ["#4572A7"],
-          tooltip: {
-            formatter: function() {
-              return `${Highcharts.dateFormat("%e %b %Y", this.x)}: ${
-                this.y
-              } lbs`;
-            }
-          },
-          series: [
-            {
-              type: "scatter",
-              name: "Weight",
-              data: processed_json
-            }
-          ]
-        });
-
-          let recent = processed_json.slice(0,100);
-          
-          $("#recent").highcharts(
-            {
-          chart: {
-            zoomType: "x"
-          },
-          title: {
-            text: "Recent Weights"
-          },
-          xAxis: {
-            type: "datetime",
-            dateTimeLabelFormats: {
-              day: "%e %b",
-              week: "%e %b",
-              month: "%b '%y",
-              year: "%Y"
-            }
-          },
-          yAxis: {
-            title: {
-              text: "Weights",
-              style: {
-                color: "#4572A7"
+            },
+            yAxis: {
+              title: {
+                text: "Weights",
+                style: {
+                  color: "#4572A7"
+                }
               }
-            }
-          },
-          colors: ["#4572A7"],
-          tooltip: {
-            formatter: function() {
-              return `${Highcharts.dateFormat("%e %b %Y", this.x)}: ${
-                this.y
-              } lbs`;
-            }
-          },
-          series: [
-            {
-              type: "scatter",
-              name: "Weight",
-              data: recent
-            }
-          ]
-            });
+            },
+            colors: ["#4572A7"],
+            tooltip: {
+              formatter: function() {
+                return `${Highcharts.dateFormat("%e %b %Y", this.x)}: ${
+                  this.y
+                } lbs`;
+              }
+            },
+            series: [
+              {
+                type: "scatter",
+                name: "Weight",
+                data: processed_json
+              }
+            ]
+          });
         });
       });
-
-      
     </script>
   </body>
 </html>
