@@ -38,6 +38,7 @@
     <div id="wrapper">
       <h1>Fitness!</h1>
       <div id="weights" class="widget"></div>
+      <div id="recent" class="widget"></div>
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script src="https://code.highcharts.com/highcharts.js"></script>
@@ -52,51 +53,57 @@
           data
         ) {
           processed_json = data.map(i => [Date.parse(i.date), i.weight]);
-          $("#weights").highcharts({
-            chart: {
-              zoomType: "x"
-            },
-            title: {
-              text: "Weights"
-            },
-            data: {
-              columnsURL: "https://alangfiles.github.io/Fitness/data.json"
-            },
-            xAxis: {
-              type: "datetime",
-              dateTimeLabelFormats: {
-                day: "%e %b",
-                week: "%e %b",
-                month: "%b '%y",
-                year: "%Y"
-              }
-            },
-            yAxis: {
-              title: {
-                text: "Weights",
-                style: {
-                  color: "#4572A7"
-                }
-              }
-            },
-            colors: ["#4572A7"],
-            tooltip: {
-              formatter: function() {
-                return `${Highcharts.dateFormat("%e %b %Y", this.x)}: ${
-                  this.y
-                } lbs`;
-              }
-            },
-            series: [
-              {
-                type: "scatter",
-                name: "Weight",
-                data: processed_json
-              }
-            ]
-          });
+          processed_json = processed_json.sort();
+          $("#weights").highcharts(getHighChartsOptions(processed_json));
+
+          $("#recent").highcharts(
+            getHighChartsOptions(processed_json.slice(0, 100))
+          );
         });
       });
+
+      let getHighChartsOptions = data => {
+        return {
+          chart: {
+            zoomType: "x"
+          },
+          title: {
+            text: "Weights"
+          },
+          xAxis: {
+            type: "datetime",
+            dateTimeLabelFormats: {
+              day: "%e %b",
+              week: "%e %b",
+              month: "%b '%y",
+              year: "%Y"
+            }
+          },
+          yAxis: {
+            title: {
+              text: "Weights",
+              style: {
+                color: "#4572A7"
+              }
+            }
+          },
+          colors: ["#4572A7"],
+          tooltip: {
+            formatter: function() {
+              return `${Highcharts.dateFormat("%e %b %Y", this.x)}: ${
+                this.y
+              } lbs`;
+            }
+          },
+          series: [
+            {
+              type: "scatter",
+              name: "Weight",
+              data: data
+            }
+          ]
+        };
+      };
     </script>
   </body>
 </html>
