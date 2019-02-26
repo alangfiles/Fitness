@@ -52,8 +52,16 @@
     <script>
       $(function() {
         
-        let getHighChartsOptions = data => {
-        return {
+        var processed_json = new Array();
+        $.getJSON("https://alangfiles.github.io/Fitness/data.json", function(
+          data
+        ) {
+          processed_json = data.map(i => [Date.parse(i.date), i.weight]);
+          processed_json = processed_json.sort();
+          
+          console.log('processed', processed_json);
+          
+          $("#weights").highcharts({
           chart: {
             zoomType: "x"
           },
@@ -89,26 +97,54 @@
             {
               type: "scatter",
               name: "Weight",
-              data: data
+              data: processed_json
             }
           ]
-        };
-      };
-        
-        var processed_json = new Array();
-        $.getJSON("https://alangfiles.github.io/Fitness/data.json", function(
-          data
-        ) {
-          processed_json = data.map(i => [Date.parse(i.date), i.weight]);
-          processed_json = processed_json.sort();
-          
-          console.log('processed', processed_json);
-          
-          $("#weights").highcharts(getHighChartsOptions(processed_json));
+        });
 
+          let recent = processed_json.slice(0,100);
+          
           $("#recent").highcharts(
-            getHighChartsOptions(processed_json.slice(0, 100))
-          );
+            {
+          chart: {
+            zoomType: "x"
+          },
+          title: {
+            text: "Recent Weights"
+          },
+          xAxis: {
+            type: "datetime",
+            dateTimeLabelFormats: {
+              day: "%e %b",
+              week: "%e %b",
+              month: "%b '%y",
+              year: "%Y"
+            }
+          },
+          yAxis: {
+            title: {
+              text: "Weights",
+              style: {
+                color: "#4572A7"
+              }
+            }
+          },
+          colors: ["#4572A7"],
+          tooltip: {
+            formatter: function() {
+              return `${Highcharts.dateFormat("%e %b %Y", this.x)}: ${
+                this.y
+              } lbs`;
+            }
+          },
+          series: [
+            {
+              type: "scatter",
+              name: "Weight",
+              data: recent
+            }
+          ]
+            });
         });
       });
 
