@@ -50,7 +50,6 @@
       <div id="recent" class="widget"></div>
       <div id="daily" class="widget"></div>
       <div id="weights" class="widget"></div>
-
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script src="https://code.highcharts.com/highcharts.js"></script>
@@ -59,21 +58,21 @@
     <script src="https://code.highcharts.com/modules/export-data.js"></script>
 
     <script>
-      $(function() {
+      $(function () {
         var processed_json = new Array();
         $.getJSON(
           "https://raw.githubusercontent.com/alangfiles/Fitness/master/data.json",
-          function(data) {
-            processed_json = data.map(i => [Date.parse(i.date), i.weight]);
+          function (data) {
+            processed_json = data.map((i) => [Date.parse(i.date), i.weight]);
             processed_json = processed_json.sort().reverse();
 
-            let options = (data, title) => {
+            let options = (data, title, tenDaySeries) => {
               return {
                 chart: {
-                  zoomType: "x"
+                  zoomType: "x",
                 },
                 title: {
-                  text: title
+                  text: title,
                 },
                 xAxis: {
                   type: "datetime",
@@ -81,38 +80,70 @@
                     day: "%e %b",
                     week: "%e %b",
                     month: "%b '%y",
-                    year: "%Y"
-                  }
+                    year: "%Y",
+                  },
                 },
                 yAxis: {
                   title: {
                     text: "Weights",
                     style: {
-                      color: "#4572A7"
-                    }
-                  }
+                      color: "#4572A7",
+                    },
+                  },
                 },
                 colors: ["#4572A7"],
                 tooltip: {
-                  formatter: function() {
+                  formatter: function () {
                     return `${Highcharts.dateFormat("%e %b %Y", this.x)}: ${
                       this.y
                     } lbs`;
-                  }
+                  },
                 },
                 series: [
                   {
                     type: "scatter",
                     name: "Weight",
-                    data: data
-                  }
-                ]
+                    data: data,
+                  },
+                  tenDaySeries
+                    ? {
+                        type: "spline",
+                        name: "Ten Day Rolling Average",
+                        color: "#ffdb58",
+                        label: "",
+                        data: tenDaySeries,
+                      }
+                    : {},
+                ],
               };
             };
 
             $("#weights").highcharts(options(processed_json, "Weights"));
             let recent = processed_json.slice(0, 100);
-            $("#recent").highcharts(options(recent, "Most Recent 100 Weights"));
+
+            let tenDaySeries = processed_json
+              .slice(0, 100)
+              .reverse()
+              .map((i, idx) => {
+                let avgWeight = i[1];
+                let count = 1;
+                for (let j = 1; j <= 10; j++) {
+                  const item = processed_json.slice(0, 100).reverse()[idx - j];
+                  if (item) {
+                    console.log("prev weight exists", item);
+                    avgWeight += item[1];
+                    count += 1;
+                  }
+                }
+                avgWeight = avgWeight / count;
+                console.log("alan", avgWeight, count);
+                return [i[0], avgWeight];
+              });
+
+            $("#recent").highcharts(
+              options(recent, "Most Recent 100 Weights", tenDaySeries)
+            );
+
             let mostRecent = processed_json.slice(0, 10);
             $("#daily").highcharts(
               options(mostRecent, "Most Recent 10 Weights")
