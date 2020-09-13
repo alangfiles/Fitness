@@ -107,7 +107,7 @@
                   },
                   tenDaySeries
                     ? {
-                        type: "spline",
+                        type: "line",
                         name: "Ten Day Rolling Average",
                         color: "#ffdb58",
                         label: "",
@@ -118,35 +118,40 @@
               };
             };
 
-            $("#weights").highcharts(options(processed_json, "Weights"));
-            let recent = processed_json.slice(0, 100);
-
-            let tenDaySeries = processed_json
-              .slice(0, 100)
-              .reverse()
-              .map((i, idx) => {
-                let avgWeight = i[1];
-                let count = 1;
-                for (let j = 1; j <= 10; j++) {
-                  const item = processed_json.slice(0, 100).reverse()[idx - j];
-                  if (item) {
-                    console.log("prev weight exists", item);
-                    avgWeight += item[1];
-                    count += 1;
-                  }
+            let tenDaySeries = processed_json.map((i, idx) => {
+              let avgWeight = i[1];
+              let count = 1;
+              for (let j = 1; j <= 10; j++) {
+                const item = processed_json[idx + j];
+                if (item) {
+                  avgWeight += item[1];
+                  count += 1;
                 }
-                avgWeight = avgWeight / count;
-                console.log("alan", avgWeight, count);
-                return [i[0], avgWeight];
-              });
+              }
+              avgWeight = avgWeight / count;
+              return [i[0], avgWeight.toFixed(1) * 1];
+            });
 
+            $("#weights").highcharts(
+              options(processed_json, "Weights", tenDaySeries)
+            );
+
+            let recent = processed_json.slice(0, 100);
             $("#recent").highcharts(
-              options(recent, "Most Recent 100 Weights", tenDaySeries)
+              options(
+                recent,
+                "Most Recent 100 Weights",
+                tenDaySeries.slice(0, 100)
+              )
             );
 
             let mostRecent = processed_json.slice(0, 10);
             $("#daily").highcharts(
-              options(mostRecent, "Most Recent 10 Weights")
+              options(
+                mostRecent,
+                "Most Recent 10 Weights",
+                tenDaySeries.slice(0, 10)
+              )
             );
           }
         );
