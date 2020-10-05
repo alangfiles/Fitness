@@ -1,4 +1,8 @@
 [
+  { "weight": 163.4, "date": "2020-10-05", "feeling": 8 },
+  { "weight": 163.6, "date": "2020-10-04", "feeling": 8 },
+  { "weight": 163.8, "date": "2020-10-03", "feeling": 7 },
+  { "weight": 163.1, "date": "2020-10-02", "feeling": 8 },
   { "weight": 162.3, "date": "2020-10-01", "feeling": 8 },
   { "weight": 160.1, "date": "2020-09-30", "feeling": 9 },
   { "weight": 165.3, "date": "2020-09-29", "feeling": 8 },
