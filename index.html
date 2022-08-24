@@ -171,19 +171,37 @@
               "2021",
               "2022",
             ].map((year) => {
+              let dataForYear = processed_json
+                .filter((item) => {
+                  let date = new Date(item[0]); //first item is date
+                  return date.getFullYear() == year;
+                })
+                .map((item) => {
+                  // change all dates to be current year (hack to get on same graph)
+                  let newDate = new Date(item[0]);
+
+                  return [newDate.setYear("2022"), item[1]];
+                });
+              let weights = dataForYear.map((i) => i[1]);
+              // console.log({ weights });
+              let minWeight = Math.min(...weights);
+              // console.log({ maxWeight });
+              let avgWeight = weights.reduce((total, amount, index, array) => {
+                total += amount;
+                if (index == array.length - 1) {
+                  return total / array.length;
+                } else {
+                  return total;
+                }
+              }, 0);
+
+              dataForYear = dataForYear.map((item) => {
+                return [item[0], item[1] - avgWeight];
+              });
+
               return {
                 name: year,
-                data: processed_json
-                  .filter((item) => {
-                    let date = new Date(item[0]); //first item is date
-                    return date.getFullYear() == year;
-                  })
-                  .map((item) => {
-                    // change all dates to be current year (hack to get on same graph)
-                    let newDate = new Date(item[0]);
-
-                    return [newDate.setYear("2022"), item[1]];
-                  }),
+                data: dataForYear,
               };
             });
 
@@ -192,11 +210,11 @@
                 type: "spline",
               },
               title: {
-                text: "Weight over years",
+                text: "Normalized Weight Avg over Years",
               },
               yAxis: {
                 title: {
-                  text: "Weight",
+                  text: "Deviation from Avg Weight",
                 },
               },
               xAxis: {
