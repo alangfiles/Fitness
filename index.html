@@ -16,6 +16,10 @@
         height: 400px;
         width: 90%;
       }
+      #yearsNormalized {
+        height: 400px;
+        width: 90%;
+      }
       #recent {
         height: 400px;
         width: 49%;
@@ -55,6 +59,7 @@
       <div id="daily" class="widget"></div>
       <div id="weights" class="widget"></div>
       <div id="years" class="widget"></div>
+      <div id="yearsNormalized" class="widget"></div>
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script src="https://code.highcharts.com/highcharts.js"></script>
@@ -196,7 +201,7 @@
               }, 0);
 
               dataForYear = dataForYear.map((item) => {
-                return [item[0], item[1] - avgWeight];
+                return [item[0], item[1], item[1] - avgWeight];
               });
 
               return {
@@ -206,6 +211,32 @@
             });
 
             $("#years").highcharts({
+              chart: {
+                type: "spline",
+              },
+              title: {
+                text: "Weight over Years",
+              },
+              yAxis: {
+                title: {
+                  text: "Weight",
+                },
+              },
+              xAxis: {
+                title: {
+                  text: "Date",
+                },
+                type: "datetime",
+                dateTimeLabelFormats: {
+                  day: "%e %b",
+                  week: "%e %b",
+                  month: "%b",
+                },
+              },
+              series: databyyear,
+            });
+
+            $("#yearsNormalized").highcharts({
               chart: {
                 type: "spline",
               },
@@ -228,7 +259,12 @@
                   month: "%b",
                 },
               },
-              series: databyyear,
+              series: databyyear.map((object) => {
+                return {
+                  ...object,
+                  data: object.data.map((i) => [i[0], i[2]]),
+                };
+              }),
             });
           }
         );
