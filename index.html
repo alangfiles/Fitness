@@ -12,6 +12,10 @@
         height: 400px;
         width: 90%;
       }
+      #years {
+        height: 400px;
+        width: 90%;
+      }
       #recent {
         height: 400px;
         width: 49%;
@@ -50,6 +54,7 @@
       <div id="recent" class="widget"></div>
       <div id="daily" class="widget"></div>
       <div id="weights" class="widget"></div>
+      <div id="years" class="widget"></div>
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script src="https://code.highcharts.com/highcharts.js"></script>
@@ -153,6 +158,60 @@
                 tenDaySeries.slice(0, 10)
               )
             );
+
+            let databyyear = [
+              "2013",
+              "2014",
+              "2015",
+              "2016",
+              "2017",
+              "2018",
+              "2019",
+              "2020",
+              "2021",
+              "2022",
+            ].map((year) => {
+              return {
+                name: year,
+                data: processed_json
+                  .filter((item) => {
+                    let date = new Date(item[0]); //first item is date
+                    return date.getFullYear() == year;
+                  })
+                  .map((item) => {
+                    // change all dates to be current year (hack to get on same graph)
+                    let newDate = new Date(item[0]);
+
+                    return [newDate.setYear("2022"), item[1]];
+                  }),
+              };
+            });
+
+            $("#years").highcharts({
+              chart: {
+                type: "spline",
+              },
+              title: {
+                text: "Weight over years",
+              },
+              yAxis: {
+                title: {
+                  text: "Weight",
+                },
+              },
+              xAxis: {
+                title: {
+                  text: "Date",
+                },
+                type: "datetime",
+                dateTimeLabelFormats: {
+                  day: "%e %b",
+                  week: "%e %b",
+                  month: "%b",
+                },
+              },
+              series: databyyear,
+            });
           }
         );
       });
