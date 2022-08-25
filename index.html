@@ -210,6 +210,40 @@
               };
             });
 
+            const alan = databyyear.map((i) => i.data).flat();
+
+            const dataAvgObject = databyyear
+              .map((i) => i.data)
+              .flat() //just give me the data
+              .reduce((prev, curr, index, array) => {
+                const date = new Date(curr[0]);
+                //just reduce it in case:
+                const safeDate = new Date(
+                  date.getFullYear(),
+                  date.getMonth(),
+                  date.getDate()
+                ).valueOf();
+
+                prev[safeDate] = {
+                  value: prev[safeDate]
+                    ? prev[safeDate].value + curr[2]
+                    : curr[2],
+                  count: prev[safeDate] ? prev[safeDate].count + 1 : 1,
+                };
+                return prev;
+              }, {});
+
+            const dataAvgArray = Object.keys(dataAvgObject)
+              .sort((a, b) => a < b)
+              .map((i) => {
+                return [i * 1, dataAvgObject[i].value / dataAvgObject[i].count];
+              });
+
+            const averageAcrossYears = {
+              name: "Average",
+              data: dataAvgArray,
+            };
+
             $("#years").highcharts({
               chart: {
                 type: "spline",
@@ -259,12 +293,16 @@
                   month: "%b",
                 },
               },
-              series: databyyear.map((object) => {
-                return {
-                  ...object,
-                  data: object.data.map((i) => [i[0], i[2]]),
-                };
-              }),
+              series: [
+                ...databyyear.map((object) => {
+                  return {
+                    ...object,
+                    data: object.data.map((i) => [i[0], i[2]]),
+                    visible: false,
+                  };
+                }),
+                averageAcrossYears,
+              ],
             });
           }
         );
