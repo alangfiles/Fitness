@@ -118,7 +118,7 @@
                   tenDaySeries
                     ? {
                         type: "line",
-                        name: "Ten Day Rolling Average",
+                        name: "Five Day Rolling Average",
                         color: "#ffdb58",
                         label: "",
                         data: tenDaySeries,
@@ -129,9 +129,10 @@
             };
 
             let tenDaySeries = processed_json.map((i, idx) => {
+              const NUM_ROLLING_DAYS = 5; //or 10 for 10 day avg
               let avgWeight = i[1];
               let count = 1;
-              for (let j = 1; j <= 10; j++) {
+              for (let j = 1; j <= NUM_ROLLING_DAYS; j++) {
                 const item = processed_json[idx + j];
                 if (item) {
                   avgWeight += item[1];
@@ -175,6 +176,7 @@
               "2020",
               "2021",
               "2022",
+              "2023",
             ].map((year) => {
               let dataForYear = processed_json
                 .filter((item) => {
