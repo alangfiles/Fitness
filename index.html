@@ -132,7 +132,7 @@
               const NUM_ROLLING_DAYS = 5; //or 10 for 10 day avg
               let avgWeight = i[1];
               let count = 1;
-              for (let j = 1; j <= NUM_ROLLING_DAYS; j++) {
+              for (let j = 0; j < NUM_ROLLING_DAYS; j++) {
                 const item = processed_json[idx + j];
                 if (item) {
                   avgWeight += item[1];
