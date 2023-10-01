@@ -133,7 +133,7 @@
               let avgWeight = i[1];
               let count = 1;
               for (let j = 0; j < NUM_ROLLING_DAYS; j++) {
-                const item = processed_json[idx + j];
+                const item = processed_json[idx - j];
                 if (item) {
                   avgWeight += item[1];
                   count += 1;
