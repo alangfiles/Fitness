@@ -1,313 +1,324 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>Fitness</title>
-    <meta name="description" content="" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <style>
-      #weights {
-        height: 400px;
-        width: 90%;
-      }
-      #years {
-        height: 400px;
-        width: 90%;
-      }
-      #yearsNormalized {
-        height: 400px;
-        width: 90%;
-      }
-      #recent {
-        height: 400px;
-        width: 90%;
-      }
-      #daily {
-        height: 400px;
-        width: 90%;
-      }
-      #wrapper {
-        width: 800;
-        margin: 0 auto;
-      }
-      #wrapper h1 {
-        text-align: center;
-      }
-      .widget {
-        background-color: #eee;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        -webkit-border-radius: 5px;
-        -moz-border-radius: 5px;
-        padding: 10px;
-        margin: 10px;
-        float: left;
-      }
-      .widget h3 {
-        text-align: center;
-        margin: 0;
-        margin-bottom: 5px;
-      }
-    </style>
-  </head>
-  <body>
-    <div id="wrapper">
-      <h1>Fitness!</h1>
-      <div id="recent" class="widget"></div>
-      <div id="daily" class="widget"></div>
-      <div id="weights" class="widget"></div>
-      <div id="years" class="widget"></div>
-      <div id="yearsNormalized" class="widget"></div>
-    </div>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-    <script src="https://code.highcharts.com/highcharts.js"></script>
-    <script src="https://code.highcharts.com/modules/series-label.js"></script>
-    <script src="https://code.highcharts.com/modules/exporting.js"></script>
-    <script src="https://code.highcharts.com/modules/export-data.js"></script>
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Fitness</title>
+  <meta name="description" content="" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <script>
-      $(function () {
-        var processed_json = new Array();
-        $.getJSON(
-          "https://raw.githubusercontent.com/alangfiles/Fitness/master/data.json",
-          function (data) {
-            processed_json = data.map((i) => [Date.parse(i.date), i.weight]);
-            processed_json = processed_json.sort().reverse();
+  <style>
+    #weights {
+      height: 400px;
+      width: 90%;
+    }
 
-            let options = (data, title, tenDaySeries) => {
-              return {
-                chart: {
-                  zoomType: "x",
+    #years {
+      height: 400px;
+      width: 90%;
+    }
+
+    #yearsNormalized {
+      height: 400px;
+      width: 90%;
+    }
+
+    #recent {
+      height: 400px;
+      width: 90%;
+    }
+
+    #daily {
+      height: 400px;
+      width: 90%;
+    }
+
+    #wrapper {
+      width: 800;
+      margin: 0 auto;
+    }
+
+    #wrapper h1 {
+      text-align: center;
+    }
+
+    .widget {
+      background-color: #eee;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      -webkit-border-radius: 5px;
+      -moz-border-radius: 5px;
+      padding: 10px;
+      margin: 10px;
+      float: left;
+    }
+
+    .widget h3 {
+      text-align: center;
+      margin: 0;
+      margin-bottom: 5px;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="wrapper">
+    <h1>Fitness!</h1>
+    <div id="recent" class="widget"></div>
+    <div id="daily" class="widget"></div>
+    <div id="weights" class="widget"></div>
+    <div id="years" class="widget"></div>
+    <div id="yearsNormalized" class="widget"></div>
+  </div>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+  <script src="https://code.highcharts.com/highcharts.js"></script>
+  <script src="https://code.highcharts.com/modules/series-label.js"></script>
+  <script src="https://code.highcharts.com/modules/exporting.js"></script>
+  <script src="https://code.highcharts.com/modules/export-data.js"></script>
+
+  <script>
+    $(function () {
+      var processed_json = new Array();
+      $.getJSON(
+        "https://raw.githubusercontent.com/alangfiles/Fitness/master/data.json",
+        function (data) {
+          processed_json = data.map((i) => [Date.parse(i.date), i.weight]);
+          processed_json = processed_json.sort().reverse();
+
+          let options = (data, title, tenDaySeries) => {
+            return {
+              chart: {
+                zoomType: "x",
+              },
+              title: {
+                text: title,
+              },
+              xAxis: {
+                type: "datetime",
+                dateTimeLabelFormats: {
+                  day: "%e %b",
+                  week: "%e %b",
+                  month: "%b '%y",
+                  year: "%Y",
                 },
+              },
+              yAxis: {
                 title: {
-                  text: title,
-                },
-                xAxis: {
-                  type: "datetime",
-                  dateTimeLabelFormats: {
-                    day: "%e %b",
-                    week: "%e %b",
-                    month: "%b '%y",
-                    year: "%Y",
+                  text: "Weights",
+                  style: {
+                    color: "#4572A7",
                   },
                 },
-                yAxis: {
-                  title: {
-                    text: "Weights",
-                    style: {
-                      color: "#4572A7",
-                    },
-                  },
-                },
-                colors: ["#4572A7"],
-                tooltip: {
-                  formatter: function () {
-                    return `${Highcharts.dateFormat("%e %b %Y", this.x)}: ${
-                      this.y
+              },
+              colors: ["#4572A7"],
+              tooltip: {
+                formatter: function () {
+                  return `${Highcharts.dateFormat("%e %b %Y", this.x)}: ${this.y
                     } lbs`;
-                  },
-                },
-                series: [
-                  {
-                    type: "scatter",
-                    name: "Weight",
-                    data: data,
-                  },
-                  tenDaySeries
-                    ? {
-                        type: "line",
-                        name: "Ten Day Rolling Average",
-                        color: "#ffdb58",
-                        label: "",
-                        data: tenDaySeries,
-                      }
-                    : {},
-                ],
-              };
-            };
-
-            let tenDaySeries = processed_json.map((i, idx) => {
-              const NUM_ROLLING_DAYS = 10; //or 10 for 10 day avg
-              let avgWeight = i[1];
-              let count = 1;
-              for (let j = 1; j < NUM_ROLLING_DAYS; j++) {
-                const item = processed_json[idx + j];
-                if (item) {
-                  avgWeight += item[1];
-                  count += 1;
-                }
-              }
-              avgWeight = avgWeight / count;
-              return [i[0], avgWeight.toFixed(1) * 1];
-            });
-
-            $("#weights").highcharts(
-              options(processed_json, "Weights", tenDaySeries)
-            );
-
-            let recent = processed_json.slice(0, 100);
-            $("#recent").highcharts(
-              options(
-                recent,
-                "Most Recent 100 Weights",
-                tenDaySeries.slice(0, 100)
-              )
-            );
-
-            let mostRecent = processed_json.slice(0, 10);
-            $("#daily").highcharts(
-              options(
-                mostRecent,
-                "Most Recent 10 Weights",
-                tenDaySeries.slice(0, 10)
-              )
-            );
-
-            let databyyear = [
-              "2013",
-              "2014",
-              "2015",
-              "2016",
-              "2017",
-              "2018",
-              "2019",
-              "2020",
-              "2021",
-              "2022",
-              "2023",
-            ].map((year) => {
-              let dataForYear = processed_json
-                .filter((item) => {
-                  let date = new Date(item[0]); //first item is date
-                  return date.getFullYear() == year;
-                })
-                .map((item) => {
-                  // change all dates to be current year (hack to get on same graph)
-                  let newDate = new Date(item[0]);
-
-                  return [newDate.setYear("2022"), item[1]];
-                });
-              let weights = dataForYear.map((i) => i[1]);
-              // console.log({ weights });
-              let minWeight = Math.min(...weights);
-              // console.log({ maxWeight });
-              let avgWeight = weights.reduce((total, amount, index, array) => {
-                total += amount;
-                if (index == array.length - 1) {
-                  return total / array.length;
-                } else {
-                  return total;
-                }
-              }, 0);
-
-              dataForYear = dataForYear.map((item) => {
-                return [item[0], item[1], item[1] - avgWeight];
-              });
-
-              return {
-                name: year,
-                data: dataForYear,
-              };
-            });
-
-
-            const dataAvgObject = databyyear
-              .map((i) => i.data)
-              .flat() //just give me the data
-              .reduce((prev, curr, index, array) => {
-                const date = new Date(curr[0]);
-                //just reduce it in case:
-                const safeDate = new Date(
-                  date.getFullYear(),
-                  date.getMonth(),
-                  date.getDate()
-                ).valueOf();
-
-                prev[safeDate] = {
-                  value: prev[safeDate]
-                    ? prev[safeDate].value + curr[2]
-                    : curr[2],
-                  count: prev[safeDate] ? prev[safeDate].count + 1 : 1,
-                };
-                return prev;
-              }, {});
-
-            const dataAvgArray = Object.keys(dataAvgObject)
-              .sort((a, b) => a < b)
-              .map((i) => {
-                return [i * 1, dataAvgObject[i].value / dataAvgObject[i].count];
-              });
-
-            const averageAcrossYears = {
-              name: "Average",
-              data: dataAvgArray,
-            };
-
-            $("#years").highcharts({
-              chart: {
-                type: "spline",
-              },
-              title: {
-                text: "Weight over Years",
-              },
-              yAxis: {
-                title: {
-                  text: "Weight",
-                },
-              },
-              xAxis: {
-                title: {
-                  text: "Date",
-                },
-                type: "datetime",
-                dateTimeLabelFormats: {
-                  day: "%e %b",
-                  week: "%e %b",
-                  month: "%b",
-                },
-              },
-              series: databyyear,
-            });
-
-            $("#yearsNormalized").highcharts({
-              chart: {
-                type: "spline",
-              },
-              title: {
-                text: "Normalized Weight Avg over Years",
-              },
-              yAxis: {
-                title: {
-                  text: "Deviation from Avg Weight",
-                },
-              },
-              xAxis: {
-                title: {
-                  text: "Date",
-                },
-                type: "datetime",
-                dateTimeLabelFormats: {
-                  day: "%e %b",
-                  week: "%e %b",
-                  month: "%b",
                 },
               },
               series: [
-                ...databyyear.map((object) => {
-                  return {
-                    ...object,
-                    data: object.data.map((i) => [i[0], i[2]]),
-                    visible: false,
-                  };
-                }),
-                averageAcrossYears,
+                {
+                  type: "scatter",
+                  name: "Weight",
+                  data: data,
+                },
+                tenDaySeries
+                  ? {
+                    type: "line",
+                    name: "Ten Day Rolling Average",
+                    color: "#ffdb58",
+                    label: "",
+                    data: tenDaySeries,
+                  }
+                  : {},
               ],
+            };
+          };
+
+          let tenDaySeries = processed_json.map((i, idx) => {
+            const NUM_ROLLING_DAYS = 10; //or 10 for 10 day avg
+            let avgWeight = i[1];
+            let count = 1;
+            for (let j = 1; j < NUM_ROLLING_DAYS; j++) {
+              const item = processed_json[idx + j];
+              if (item) {
+                avgWeight += item[1];
+                count += 1;
+              }
+            }
+            avgWeight = avgWeight / count;
+            return [i[0], avgWeight.toFixed(1) * 1];
+          });
+
+          $("#weights").highcharts(
+            options(processed_json, "Weights", tenDaySeries)
+          );
+
+          let recent = processed_json.slice(0, 100);
+          $("#recent").highcharts(
+            options(
+              recent,
+              "Most Recent 100 Weights",
+              tenDaySeries.slice(0, 100)
+            )
+          );
+
+          let mostRecent = processed_json.slice(0, 10);
+          $("#daily").highcharts(
+            options(
+              mostRecent,
+              "Most Recent 10 Weights",
+              tenDaySeries.slice(0, 10)
+            )
+          );
+
+          let databyyear = [
+            "2013",
+            "2014",
+            "2015",
+            "2016",
+            "2017",
+            "2018",
+            "2019",
+            "2020",
+            "2021",
+            "2022",
+            "2023",
+            "2024",
+          ].map((year) => {
+            let dataForYear = processed_json
+              .filter((item) => {
+                let date = new Date(item[0]); //first item is date
+                return date.getFullYear() == year;
+              })
+              .map((item) => {
+                // change all dates to be current year (hack to get on same graph)
+                let newDate = new Date(item[0]);
+
+                return [newDate.setYear("2022"), item[1]];
+              });
+            let weights = dataForYear.map((i) => i[1]);
+            // console.log({ weights });
+            let minWeight = Math.min(...weights);
+            // console.log({ maxWeight });
+            let avgWeight = weights.reduce((total, amount, index, array) => {
+              total += amount;
+              if (index == array.length - 1) {
+                return total / array.length;
+              } else {
+                return total;
+              }
+            }, 0);
+
+            dataForYear = dataForYear.map((item) => {
+              return [item[0], item[1], item[1] - avgWeight];
             });
-          }
-        );
-      });
-    </script>
-  </body>
+
+            return {
+              name: year,
+              data: dataForYear,
+            };
+          });
+
+
+          const dataAvgObject = databyyear
+            .map((i) => i.data)
+            .flat() //just give me the data
+            .reduce((prev, curr, index, array) => {
+              const date = new Date(curr[0]);
+              //just reduce it in case:
+              const safeDate = new Date(
+                date.getFullYear(),
+                date.getMonth(),
+                date.getDate()
+              ).valueOf();
+
+              prev[safeDate] = {
+                value: prev[safeDate]
+                  ? prev[safeDate].value + curr[2]
+                  : curr[2],
+                count: prev[safeDate] ? prev[safeDate].count + 1 : 1,
+              };
+              return prev;
+            }, {});
+
+          const dataAvgArray = Object.keys(dataAvgObject)
+            .sort((a, b) => a < b)
+            .map((i) => {
+              return [i * 1, dataAvgObject[i].value / dataAvgObject[i].count];
+            });
+
+          const averageAcrossYears = {
+            name: "Average",
+            data: dataAvgArray,
+          };
+
+          $("#years").highcharts({
+            chart: {
+              type: "spline",
+            },
+            title: {
+              text: "Weight over Years",
+            },
+            yAxis: {
+              title: {
+                text: "Weight",
+              },
+            },
+            xAxis: {
+              title: {
+                text: "Date",
+              },
+              type: "datetime",
+              dateTimeLabelFormats: {
+                day: "%e %b",
+                week: "%e %b",
+                month: "%b",
+              },
+            },
+            series: databyyear,
+          });
+
+          $("#yearsNormalized").highcharts({
+            chart: {
+              type: "spline",
+            },
+            title: {
+              text: "Normalized Weight Avg over Years",
+            },
+            yAxis: {
+              title: {
+                text: "Deviation from Avg Weight",
+              },
+            },
+            xAxis: {
+              title: {
+                text: "Date",
+              },
+              type: "datetime",
+              dateTimeLabelFormats: {
+                day: "%e %b",
+                week: "%e %b",
+                month: "%b",
+              },
+            },
+            series: [
+              ...databyyear.map((object) => {
+                return {
+                  ...object,
+                  data: object.data.map((i) => [i[0], i[2]]),
+                  visible: false,
+                };
+              }),
+              averageAcrossYears,
+            ],
+          });
+        }
+      );
+    });
+  </script>
+</body>
+
 </html>
